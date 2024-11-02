@@ -1,5 +1,3 @@
-# HackTX_Chopstix
-
 # Welcome to our HackTX 2024 project, codenamed *CHOPSTIX*
 Our project features a silly, but useful robot.
 
