@@ -194,6 +194,23 @@ def direction(frame):
             print("Move Up")
         elif tgt[1] < center[1]:
             print("Move Down")
+            
+def put_in_mouth(frame):
+    tgt = get_target(frame)
+    center = mouth.center_mouth(mouth)
+    
+    buffer = 10
+    
+    while has_target(frame):
+        while tgt[0] < (center[0] - buffer):
+            print("Move Right")
+        while tgt[0] > (center[0] + buffer):
+            print("Move Left")
+
+        while tgt[1] < (center[1] - buffer):
+            print("Move Down")
+        while tgt[1] > (center[1] + buffer):
+            print("Move Up")
 
 def main():
     # Open video capture
@@ -215,7 +232,7 @@ def main():
         position_stix(frame)
         comm.toggleSticks()
         
-        mouth.put_in_mouth(frame)
+        put_in_mouth(frame)
         comm.toggleSticks
         
         # Display the frame with rectangles
