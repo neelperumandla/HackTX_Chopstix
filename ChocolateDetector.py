@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import detect_open_mouth as mouth
+
 
 def get_contours(frame):
     # Convert frame to HSV color space
@@ -77,6 +79,7 @@ def find_closest_bbox(bboxes, reference_bbox):
 
     return closest_bbox
 
+
 def draw_rect(frame):
     # Detect contours
 
@@ -100,6 +103,14 @@ def draw_rect(frame):
     
     
     return frame
+
+def get_target(frame):
+    chocolate_contours = get_contours(frame)
+    eligible_chocolates = eligible(chocolate_contours)
+    tgt = find_closest_bbox([cv2.boundingRect(contour) for contour in eligible_chocolates],
+                            cv2.boundingRect(eligible_chocolates[0]))
+    
+    return calculate_center(tgt)
 
 def position_stix(frame):
     # Detect and filter chocolate contours
@@ -192,6 +203,7 @@ def main():
         
         # Process frame and draw rectangles around detected Snickers Minis
         frame = draw_rect(frame, 'brown')
+        mouth.put_in_mouth(frame)
         direction(frame)
         position_stix(frame)
         

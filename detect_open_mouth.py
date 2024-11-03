@@ -3,6 +3,7 @@ from scipy.spatial import distance as dist
 from imutils.video import VideoStream
 from imutils import face_utils
 from threading import Thread
+from ChocolateDetector import get_target
 import numpy as np
 import argparse
 import imutils
@@ -10,6 +11,27 @@ import time
 import dlib
 import cv2
 
+def put_in_mouth(frame):
+    tgt = get_target(frame)
+    center = center_mouth(mouth)
+    
+    buffer = 10
+    if tgt[0] < (center[0] - buffer):
+        print("Move Right")
+    elif tgt[0] > (center[0] + buffer):
+        print("Move Left")
+
+    if tgt[1] < (center[1] - buffer):
+        print("Move Down")
+    elif tgt[1] > (center[1] + buffer):
+        print("Move Up")
+        
+
+def center_mouth(mouth):
+    vert_center = (mouth[2][1] + mouth[10][1]) / 2
+    horiz_center = (mouth[0][0] + mouth[6][0]) / 2
+    
+    return (horiz_center, vert_center)
 def mouth_aspect_ratio(mouth):
     # Compute the Euclidean distances between the two sets of
     # vertical mouth landmarks (x, y)-coordinates
