@@ -9,7 +9,7 @@ AccelStepper actuator(HALFSTEP, 1, 3, 2, 4);
 
 // NEMA Motor parameters
 const int NEMA_SPEED = 1000;
-const int NEMA_ACCEL = 1000000;
+const int NEMA_ACCEL = 100000;
 
 // Tiny Motor parameters
 const int TINY_SPEED = 80;
@@ -27,6 +27,21 @@ double AMR_STEPS_PER_DEGREES = 200.0 / 360.0;
 double MAX_BASE_ROTATION = 90;   // base can rotate 90 deg either direction
 double MAX_ARM_INCLINATION = 90; // can rotate up 90 degrees
 
+// used to tell communication computer something bad happened
+void sendError(String error)
+{
+  Serial.println("ERROR" + error);
+}
+
+// Set all zeros
+// Move all axis to zero position prior to running
+void zeroAxis()
+{
+  currBaseLocation = 0;
+  currArmInclination = 0;
+  chopStixOpen = true;
+}
+
 void setup()
 {
   // setup motors
@@ -42,15 +57,6 @@ void setup()
 
   // Assume the arm was in zero position prior to starting
   zeroAxis();
-}
-
-// Set all zeros
-// Move all axis to zero position prior to running
-void zeroAxis()
-{
-  currBaseLocation = 0;
-  currArmInclination = 0;
-  chopStixOpen = true;
 }
 
 // rotates to new base position by steps
@@ -207,13 +213,12 @@ void communicationLoop()
   }
 }
 
-// used to tell communication computer something bad happened
-void sendError(String error)
-{
-  Serial.println("ERROR" + error);
-}
-
 void loop()
 {
-  communicationLoop();
+  // communicationLoop();
+  actuator.moveTo(-5000);
+  while ((actuator.distanceToGo() != 0))
+  {
+    actuator.run();
+  }
 }
