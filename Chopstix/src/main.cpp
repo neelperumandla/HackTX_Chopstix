@@ -1,19 +1,20 @@
 #include <Arduino.h>
 #include <AccelStepper.h>
 #define HALFSTEP 4
+#define MotorInterfaceType 4
 
 // Motors
 AccelStepper rotationBase(HALFSTEP, 5, 6, 7, 8);
 AccelStepper arm(HALFSTEP, 9, 10, 11, 12);
-AccelStepper actuator(HALFSTEP, 1, 3, 2, 4);
+AccelStepper actuator(MotorInterfaceType, 13, 3, 2, 4);
 
 // NEMA Motor parameters
 const int NEMA_SPEED = 1000;
-const int NEMA_ACCEL = 100000;
+const int NEMA_ACCEL = 10000;
 
 // Tiny Motor parameters
-const int TINY_SPEED = 80;
-const int TINY_ACCELERATION = 80;
+const int TINY_SPEED = 30;
+const int TINY_ACCELERATION = 30;
 
 // Current Coordinates (in steps NOT degrees)
 double currBaseLocation;
@@ -51,6 +52,7 @@ void setup()
   arm.setAcceleration(NEMA_ACCEL);
   actuator.setSpeed(TINY_SPEED);
   actuator.setAcceleration(TINY_ACCELERATION);
+  actuator.setMaxSpeed(TINY_SPEED);
 
   // serial setup
   Serial.begin(9600);
