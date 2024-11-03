@@ -11,7 +11,7 @@ serialRead = serial.Serial(
 
 # encodes to write to sepytrial
 def serialWrite(inp):
-    time.sleep(0.1)
+    time.sleep(2)
     serialRead.write(str.encode(inp))
 
 
@@ -33,3 +33,6 @@ def toggleSticks():
 # zero out the axis'
 def zeroAxis():
     serialWrite("z")
+
+
+rotateArm(50)

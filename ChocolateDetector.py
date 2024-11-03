@@ -132,32 +132,32 @@ def has_target(frame):
         return True
     else:
         return False
-    
+
+
 def put_in_mouth(frame):
     if not has_target(frame):
         return
-    
+
     chocolate_contours = get_contours(frame)
     eligible_chocolates = eligible(chocolate_contours)
-    
+
     tgt = find_closest_bbox(
         [cv2.boundingRect(contour) for contour in eligible_chocolates],
         cv2.boundingRect(eligible_chocolates[0]),
     )
     center = mouth.center_mouth(mouth)
-    
+
     buffer = 10
-    
-    
+
     while tgt[0] < (center[0] - buffer):
         print("Move Right")
-        comm.rotateBase(4)
+        comm.rotateBase(15)
         update_tgt(frame)
     while tgt[0] > (center[0] + buffer):
         print("Move Left")
-        comm.rotateBase(-4)
+        comm.rotateBase(-15)
         update_tgt(frame)
-    comm.rotateArm(20)
+    comm.rotateArm(100)
     # while tgt[1] < (center[1] - buffer):
     #     print("Move Down")
     #     update_tgt(frame)
@@ -208,17 +208,17 @@ def position_stix(frame):
     buffer = 10
 
     # Adjust position based on chocolate target relative to chopstick midpoint
-    width, height,_, _ = frame.shape
+    width, height, _, _ = frame.shape
     tgt_center = calculate_center(tgt)
-    while tgt_center[0] < (width/2 - buffer):
+    while tgt_center[0] < (width / 2 - buffer):
         print("Move Right")
-        comm.rotateBase(4)
+        comm.rotateBase(15)
         update_tgt(frame)
         if not has_target(frame):
             return
-    while tgt_center[0] > (width/2 + buffer):
+    while tgt_center[0] > (width / 2 + buffer):
         print("Move Left")
-        comm.rotateBase(-4)
+        comm.rotateBase(-15)
         update_tgt(frame)
         if not has_target(frame):
             return
@@ -228,13 +228,14 @@ def position_stix(frame):
     #     update_tgt(frame)
     #     if not has_target(frame):
     #         return
-        
+
     # while tgt_center[1] > (height + buffer):
     #     print("Move Up")
     #     update_tgt(frame)
     #     if not has_target(frame):
     #         return
     return
+
 
 def update_tgt(frame):
     chocolate_contours = get_contours(frame)
@@ -243,6 +244,8 @@ def update_tgt(frame):
         [cv2.boundingRect(contour) for contour in eligible_chocolates],
         cv2.boundingRect(eligible_chocolates[0]),
     )
+
+
 def direction(frame):
     height, width, _ = frame.shape
 
@@ -280,7 +283,7 @@ def main():
     # Open video capture
     cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
     cap = cv2.VideoCapture(1)
-    
+
     is_found = False
 
     while cap.isOpened():
@@ -292,8 +295,8 @@ def main():
         # Set camera exposure settings
         cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0)
         cap.set(cv2.CAP_PROP_EXPOSURE, -4.7)
-        
-        if(has_target(frame)):
+
+        if has_target(frame):
             is_found = True
 
         # Display the frame with rectangles
@@ -303,12 +306,13 @@ def main():
         frame = draw_rect(frame)
         direction(frame)
         position_stix(frame)
-        if(not has_target(frame) and is_found):
+        if not has_target(frame) and is_found:
             print("take chocolate")
             comm.toggleSticks()
             put_in_mouth(frame)
             comm.toggleSticks()
-            
+
+        comm.rotateArm(-100)
 
         # Exit if 'q' key is pressed
         if cv2.waitKey(2) == ord("q"):

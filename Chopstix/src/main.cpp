@@ -10,7 +10,7 @@ AccelStepper arm2(HALFSTEP, A2, A3, A4, A5);
 AccelStepper actuator(MotorInterfaceType, 13, 3, 2, 4);
 
 // NEMA Motor parameters
-const int NEMA_SPEED = 1000;
+const int NEMA_SPEED = 800;
 const int NEMA_ACCEL = 10000;
 
 // Tiny Motor parameters
