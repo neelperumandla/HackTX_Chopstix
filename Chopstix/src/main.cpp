@@ -3,9 +3,9 @@
 #define HALFSTEP 4
 
 // Motors
-AccelStepper rotationBase(HALFSTEP, 1, 2, 3, 4);
-AccelStepper arm(HALFSTEP, 5, 6, 7, 8);
-AccelStepper actuator(HALFSTEP, 9, 10, 11, 12);
+AccelStepper rotationBase(HALFSTEP, 5, 6, 7, 8);
+AccelStepper arm(HALFSTEP, 9, 10, 11, 12);
+AccelStepper actuator(HALFSTEP, 1, 3, 2, 4);
 
 // NEMA Motor parameters
 const int NEMA_SPEED = 1000;
