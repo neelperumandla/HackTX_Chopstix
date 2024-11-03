@@ -5,7 +5,8 @@
 
 // Motors
 AccelStepper rotationBase(HALFSTEP, 5, 6, 7, 8);
-AccelStepper arm(HALFSTEP, 9, 10, 11, 12);
+AccelStepper arm1(HALFSTEP, 9, 10, 11, 12);
+AccelStepper arm2(HALFSTEP, A2, A3, A4, A5);
 AccelStepper actuator(MotorInterfaceType, 13, 3, 2, 4);
 
 // NEMA Motor parameters
@@ -13,8 +14,8 @@ const int NEMA_SPEED = 1000;
 const int NEMA_ACCEL = 10000;
 
 // Tiny Motor parameters
-const int TINY_SPEED = 30;
-const int TINY_ACCELERATION = 30;
+const int TINY_SPEED = 80;
+const int TINY_ACCELERATION = 80;
 
 // Current Coordinates (in steps NOT degrees)
 double currBaseLocation;
@@ -22,7 +23,7 @@ double currArmInclination;
 boolean chopStixOpen;
 
 // Movement Parameters
-double TINY_STEPS_TO_CLOSE = 50;
+double TINY_STEPS_TO_CLOSE = 200;
 double BASE_STEPS_PER_DEGREE = (200.0 / 360.0) * (35.0 / 83.0);
 double AMR_STEPS_PER_DEGREES = 200.0 / 360.0;
 double MAX_BASE_ROTATION = 90;   // base can rotate 90 deg either direction
@@ -48,9 +49,11 @@ void setup()
   // setup motors
   rotationBase.setMaxSpeed(NEMA_SPEED);
   rotationBase.setAcceleration(NEMA_ACCEL);
-  arm.setSpeed(NEMA_SPEED);
-  arm.setAcceleration(NEMA_ACCEL);
-  actuator.setSpeed(TINY_SPEED);
+  arm1.setMaxSpeed(NEMA_SPEED);
+  arm1.setAcceleration(NEMA_ACCEL);
+  arm2.setMaxSpeed(NEMA_SPEED);
+  arm2.setAcceleration(NEMA_ACCEL);
+  actuator.setMaxSpeed(TINY_SPEED);
   actuator.setAcceleration(TINY_ACCELERATION);
   actuator.setMaxSpeed(TINY_SPEED);
 
@@ -91,11 +94,14 @@ void rotateArmBySteps(int steps)
   // make sure not out of bounds
   if (true)
   {
-    arm.setCurrentPosition(0);
-    arm.moveTo(steps);
-    while (arm.distanceToGo() != 0)
+    arm1.setCurrentPosition(0);
+    arm2.setCurrentPosition(0);
+    arm1.moveTo(steps);
+    arm2.moveTo(steps);
+    while (arm1.distanceToGo() != 0)
     {
-      arm.run();
+      arm1.run();
+      arm2.run();
     }
     currArmInclination = newLocation;
   }
@@ -166,13 +172,13 @@ void communicationLoop()
   // remove /n from command
   if (space1 == -1)
   {
-    baseCommand = command.substring(0, command.length() - 1);
+    baseCommand = command.substring(0, command.length());
   }
   // get split the command and remove /n from the end
   else
   {
     baseCommand = command.substring(0, space1);
-    secondPart = command.substring(space1, command.length() - 1);
+    secondPart = command.substring(space1 + 1, command.length());
   }
 
   // rb = rotate base
@@ -191,6 +197,7 @@ void communicationLoop()
   if (baseCommand.equals("tc"))
   {
     toggleStix();
+    Serial.println("running already");
   }
   // z = zeroAxis
   if (baseCommand.equals("z"))
@@ -214,13 +221,14 @@ void communicationLoop()
     sendError("unknown command");
   }
 }
-
+boolean done = true;
 void loop()
 {
-  // communicationLoop();
-  actuator.moveTo(-5000);
-  while ((actuator.distanceToGo() != 0))
+
+  if (done)
   {
-    actuator.run();
+    // toggleStix();
+    done = false;
   }
+  communicationLoop();
 }
