@@ -238,7 +238,10 @@ def main():
         frame = draw_rect(frame)
         direction(frame)
         position_stix(frame)
-        comm.toggleSticks()
+        if(not has_target(frame)):
+            print("take chocolate")
+            comm.toggleSticks()
+            break
 
         # Display the frame with rectangles
         cv2.imshow("Snickers Minis Detection", frame)
