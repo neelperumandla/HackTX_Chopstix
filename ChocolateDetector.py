@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import detect_open_mouth as mouth
+import Communicator as comm
 
 
 def get_contours(frame):
@@ -212,8 +213,10 @@ def main():
         frame = draw_rect(frame, 'brown')
         
         position_stix(frame)
+        comm.toggleSticks()
         
         mouth.put_in_mouth(frame)
+        comm.toggleSticks
         
         # Display the frame with rectangles
         cv2.imshow('Snickers Minis Detection', frame)
