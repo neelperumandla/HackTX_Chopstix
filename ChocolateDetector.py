@@ -114,49 +114,52 @@ def get_target(frame):
     return calculate_center(tgt)
 
 def position_stix(frame):
-    # Detect and filter chocolate contours
-    chocolate_contours = get_contours(frame)
-    eligible_chocolates = eligible(chocolate_contours)
     
-    if not eligible_chocolates:
-        print("No chocolate detected.")
-        return
-    
-    # Find closest chocolate contour to the first one in the list
-    tgt = find_closest_bbox([cv2.boundingRect(contour) for contour in eligible_chocolates],
-                            cv2.boundingRect(eligible_chocolates[0]))
+    while has_target(frame):
+        # Detect and filter chocolate contours
+        chocolate_contours = get_contours(frame)
+        eligible_chocolates = eligible(chocolate_contours)
+        
+        if not eligible_chocolates:
+            print("No chocolate detected.")
+            return
+        
+        # Find closest chocolate contour to the first one in the list
+        tgt = find_closest_bbox([cv2.boundingRect(contour) for contour in eligible_chocolates],
+                                cv2.boundingRect(eligible_chocolates[0]))
 
-    if tgt is None:
-        print("No valid chocolate target found.")
-        return
+        if tgt is None:
+            print("No valid chocolate target found.")
+            return
 
-    # Detect chopstick contours and ensure there are at least two
-    chopstick_contours = get_stix_contours(frame)
-    if len(chopstick_contours) < 2:
-        print("Not enough chopstick contours detected.")
-        return
+        # Detect chopstick contours and ensure there are at least two
+        chopstick_contours = get_stix_contours(frame)
+        if len(chopstick_contours) < 2:
+            print("Not enough chopstick contours detected.")
+            return
 
-    # Calculate centers of the two chopstick contours
-    left_center = calculate_center(cv2.boundingRect(chopstick_contours[0]))
-    right_center = calculate_center(cv2.boundingRect(chopstick_contours[1]))
+        # Calculate centers of the two chopstick contours
+        left_center = calculate_center(cv2.boundingRect(chopstick_contours[0]))
+        right_center = calculate_center(cv2.boundingRect(chopstick_contours[1]))
 
-    # Calculate midpoint between chopsticks
-    current_aim = ((left_center[0] + right_center[0]) / 2, (left_center[1] + right_center[1]) / 2)
+        # Calculate midpoint between chopsticks
+        current_aim = ((left_center[0] + right_center[0]) / 2, (left_center[1] + right_center[1]) / 2)
 
-    # Set a buffer threshold for alignment tolerance
-    buffer = 10
+        # Set a buffer threshold for alignment tolerance
+        buffer = 10
 
-    # Adjust position based on chocolate target relative to chopstick midpoint
-    tgt_center = calculate_center(tgt)
-    if tgt_center[0] < (current_aim[0] - buffer):
-        print("Move Right")
-    elif tgt_center[0] > (current_aim[0] + buffer):
-        print("Move Left")
+        # Adjust position based on chocolate target relative to chopstick midpoint
+        tgt_center = calculate_center(tgt)
+        if tgt_center[0] < (current_aim[0] - buffer):
+            print("Move Right")
+        elif tgt_center[0] > (current_aim[0] + buffer):
+            print("Move Left")
 
-    if tgt_center[1] < (current_aim[1] - buffer):
-        print("Move Down")
-    elif tgt_center[1] > (current_aim[1] + buffer):
-        print("Move Up")
+        if tgt_center[1] < (current_aim[1] - buffer):
+            print("Move Down")
+        elif tgt_center[1] > (current_aim[1] + buffer):
+            print("Move Up")
+        
 
 def has_target(frame):
     if(len(eligible(get_contours(frame))) > 0):
@@ -232,8 +235,8 @@ def main():
         position_stix(frame)
         comm.toggleSticks()
         
-        put_in_mouth(frame)
-        comm.toggleSticks
+        # put_in_mouth(frame)
+        # comm.toggleSticks
         
         # Display the frame with rectangles
         cv2.imshow('Snickers Minis Detection', frame)
