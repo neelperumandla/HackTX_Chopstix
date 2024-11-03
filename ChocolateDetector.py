@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
-import detect_open_mouth as mouth
 import Communicator as comm
-
 
 def get_contours(frame):
     # Convert frame to HSV color space
@@ -80,7 +78,6 @@ def find_closest_bbox(bboxes, reference_bbox):
 
     return closest_bbox
 
-
 def draw_rect(frame):
     # Detect contours
 
@@ -105,18 +102,18 @@ def draw_rect(frame):
     
     return frame
 
-def get_target(frame):
-    chocolate_contours = get_contours(frame)
-    eligible_chocolates = eligible(chocolate_contours)
-    tgt = find_closest_bbox([cv2.boundingRect(contour) for contour in eligible_chocolates],
-                            cv2.boundingRect(eligible_chocolates[0]))
-    
-    return calculate_center(tgt)
+def has_target(frame):
+    contours = get_contours(frame)
+    elg = eligible(contours)
+    if(len(elg) > 0):
+        return True
+    else:
+        return False
 
 def position_stix(frame):
-    
+    # Detect and filter chocolate contours
     while has_target(frame):
-        # Detect and filter chocolate contours
+        
         chocolate_contours = get_contours(frame)
         eligible_chocolates = eligible(chocolate_contours)
         
@@ -159,14 +156,6 @@ def position_stix(frame):
             print("Move Down")
         elif tgt_center[1] > (current_aim[1] + buffer):
             print("Move Up")
-        
-
-def has_target(frame):
-    if(len(eligible(get_contours(frame))) > 0):
-        return True
-    else:
-        return False
-        
 
 
 def direction(frame):
@@ -197,23 +186,6 @@ def direction(frame):
             print("Move Up")
         elif tgt[1] < center[1]:
             print("Move Down")
-            
-def put_in_mouth(frame):
-    tgt = get_target(frame)
-    center = mouth.center_mouth(mouth)
-    
-    buffer = 10
-    
-    while has_target(frame):
-        while tgt[0] < (center[0] - buffer):
-            print("Move Right")
-        while tgt[0] > (center[0] + buffer):
-            print("Move Left")
-
-        while tgt[1] < (center[1] - buffer):
-            print("Move Down")
-        while tgt[1] > (center[1] + buffer):
-            print("Move Up")
 
 def main():
     # Open video capture
@@ -231,12 +203,8 @@ def main():
         
         # Process frame and draw rectangles around detected Snickers Minis
         frame = draw_rect(frame)
-        
+        direction(frame)
         position_stix(frame)
-        comm.toggleSticks()
-        
-        # put_in_mouth(frame)
-        # comm.toggleSticks
         
         # Display the frame with rectangles
         cv2.imshow('Snickers Minis Detection', frame)
