@@ -3,6 +3,7 @@ from scipy.spatial import distance as dist
 from imutils.video import VideoStream
 from imutils import face_utils
 from threading import Thread
+import ChocolateDetector as ch
 import numpy as np
 import argparse
 import imutils
@@ -68,7 +69,7 @@ out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 3
 time.sleep(1.0)
 
 # Loop over frames from the video stream
-while True:
+while ch.has_target():
     # Grab the frame from the threaded video file stream
     frame = vs.read()
     
