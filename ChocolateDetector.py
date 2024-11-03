@@ -6,7 +6,7 @@ def get_contours(frame):
     frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     
     # Define color mask range for detecting Snickers Minis
-    mask = cv2.inRange(frame_hsv, (10, 30, 140), (25, 140, 220))
+    mask = cv2.inRange(frame_hsv, (6, 63, 0), (23, 225, 81))
     
     # Optional: Apply morphological operations to clean up the mask
     frame_threshold = cv2.erode(mask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2)))
@@ -178,7 +178,7 @@ def direction(frame):
 
 def main():
     # Open video capture
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     
     while cap.isOpened():
         ret, frame = cap.read()
