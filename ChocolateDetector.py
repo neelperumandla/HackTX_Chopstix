@@ -157,6 +157,13 @@ def position_stix(frame):
     elif tgt_center[1] > (current_aim[1] + buffer):
         print("Move Up")
 
+def has_target(frame):
+    if(len(eligible(get_contours(frame))) > 0):
+        return True
+    else:
+        return False
+        
+
 
 def direction(frame):
     height, width, _ = frame.shape
@@ -203,9 +210,10 @@ def main():
         
         # Process frame and draw rectangles around detected Snickers Minis
         frame = draw_rect(frame, 'brown')
-        mouth.put_in_mouth(frame)
-        direction(frame)
+        
         position_stix(frame)
+        
+        mouth.put_in_mouth(frame)
         
         # Display the frame with rectangles
         cv2.imshow('Snickers Minis Detection', frame)

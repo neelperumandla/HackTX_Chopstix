@@ -3,7 +3,7 @@ from scipy.spatial import distance as dist
 from imutils.video import VideoStream
 from imutils import face_utils
 from threading import Thread
-from ChocolateDetector import get_target
+from ChocolateDetector import get_target, has_target
 import numpy as np
 import argparse
 import imutils
@@ -16,15 +16,17 @@ def put_in_mouth(frame):
     center = center_mouth(mouth)
     
     buffer = 10
-    if tgt[0] < (center[0] - buffer):
-        print("Move Right")
-    elif tgt[0] > (center[0] + buffer):
-        print("Move Left")
+    
+    while has_target(frame):
+        while tgt[0] < (center[0] - buffer):
+            print("Move Right")
+        while tgt[0] > (center[0] + buffer):
+            print("Move Left")
 
-    if tgt[1] < (center[1] - buffer):
-        print("Move Down")
-    elif tgt[1] > (center[1] + buffer):
-        print("Move Up")
+        while tgt[1] < (center[1] - buffer):
+            print("Move Down")
+        while tgt[1] > (center[1] + buffer):
+            print("Move Up")
         
 
 def center_mouth(mouth):
