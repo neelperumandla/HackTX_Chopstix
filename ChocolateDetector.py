@@ -16,6 +16,24 @@ def get_contours(frame):
 
     return contours
 
+def get_stix_contours(frame):
+    frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    
+    mask1 = cv2.inRange(frame_hsv, (0, 70, 50), (10, 255, 255)) # red lower
+    mask2 = cv2.inRange(frame_hsv, (170, 70, 50), (180, 255, 255)) # red upper
+    frame_threshold = mask1 | mask2
+    
+    frame_threshold = cv2.erode(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
+    frame_threshold = cv2.dilate(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
+
+    frame_threshold = cv2.dilate(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
+    frame_threshold = cv2.erode(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
+
+    
+    contours, _ = cv2.findContours(frame_threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+    return contours
+
 def eligible(contours):
     # Filter out contours based on size
     colors = []
@@ -61,6 +79,7 @@ def find_closest_bbox(bboxes, reference_bbox):
 
 def draw_rect(frame):
     # Detect contours
+
     contours = get_contours(frame)
     
     # Filter for eligible contours based on size
@@ -71,7 +90,62 @@ def draw_rect(frame):
         x, y, w, h = cv2.boundingRect(contour)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
     
+    contours = get_stix_contours(frame)
+    bounding_box = eligible(contours)
+    
+    # Draw bounding rectangles on eligible contours
+    for contour in bounding_box:
+        x, y, w, h = cv2.boundingRect(contour)
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    
+    
     return frame
+
+def position_stix(frame):
+    # Detect and filter chocolate contours
+    chocolate_contours = get_contours(frame)
+    eligible_chocolates = eligible(chocolate_contours)
+    
+    if not eligible_chocolates:
+        print("No chocolate detected.")
+        return
+    
+    # Find closest chocolate contour to the first one in the list
+    tgt = find_closest_bbox([cv2.boundingRect(contour) for contour in eligible_chocolates],
+                            cv2.boundingRect(eligible_chocolates[0]))
+
+    if tgt is None:
+        print("No valid chocolate target found.")
+        return
+
+    # Detect chopstick contours and ensure there are at least two
+    chopstick_contours = get_stix_contours(frame)
+    if len(chopstick_contours) < 2:
+        print("Not enough chopstick contours detected.")
+        return
+
+    # Calculate centers of the two chopstick contours
+    left_center = calculate_center(cv2.boundingRect(chopstick_contours[0]))
+    right_center = calculate_center(cv2.boundingRect(chopstick_contours[1]))
+
+    # Calculate midpoint between chopsticks
+    current_aim = ((left_center[0] + right_center[0]) / 2, (left_center[1] + right_center[1]) / 2)
+
+    # Set a buffer threshold for alignment tolerance
+    buffer = 10
+
+    # Adjust position based on chocolate target relative to chopstick midpoint
+    tgt_center = calculate_center(tgt)
+    if tgt_center[0] < (current_aim[0] - buffer):
+        print("Move Right")
+    elif tgt_center[0] > (current_aim[0] + buffer):
+        print("Move Left")
+
+    if tgt_center[1] < (current_aim[1] - buffer):
+        print("Move Down")
+    elif tgt_center[1] > (current_aim[1] + buffer):
+        print("Move Up")
+
 
 def direction(frame):
     height, width, _ = frame.shape
@@ -117,8 +191,9 @@ def main():
         cap.set(cv2.CAP_PROP_EXPOSURE, -4.7)
         
         # Process frame and draw rectangles around detected Snickers Minis
-        frame = draw_rect(frame)
+        frame = draw_rect(frame, 'brown')
         direction(frame)
+        position_stix(frame)
         
         # Display the frame with rectangles
         cv2.imshow('Snickers Minis Detection', frame)
