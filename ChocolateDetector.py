@@ -151,16 +151,19 @@ def put_in_mouth(frame):
     
     while tgt[0] < (center[0] - buffer):
         print("Move Right")
+        comm.rotateBase(4)
         update_tgt(frame)
     while tgt[0] > (center[0] + buffer):
         print("Move Left")
+        comm.rotateBase(-4)
         update_tgt(frame)
-    while tgt[1] < (center[1] - buffer):
-        print("Move Down")
-        update_tgt(frame)
-    while tgt[1] > (center[1] + buffer):
-        print("Move Up")
-        update_tgt(frame)
+    comm.rotateArm(20)
+    # while tgt[1] < (center[1] - buffer):
+    #     print("Move Down")
+    #     update_tgt(frame)
+    # while tgt[1] > (center[1] + buffer):
+    #     print("Move Up")
+    #     update_tgt(frame)
 
 
 def position_stix(frame):
@@ -209,26 +212,28 @@ def position_stix(frame):
     tgt_center = calculate_center(tgt)
     while tgt_center[0] < (width/2 - buffer):
         print("Move Right")
+        comm.rotateBase(4)
         update_tgt(frame)
         if not has_target(frame):
             return
     while tgt_center[0] > (width/2 + buffer):
         print("Move Left")
+        comm.rotateBase(-4)
         update_tgt(frame)
         if not has_target(frame):
             return
 
-    while tgt_center[1] < (height - buffer):
-        print("Move Down")
-        update_tgt(frame)
-        if not has_target(frame):
-            return
+    # while tgt_center[1] < (height - buffer):
+    #     print("Move Down")
+    #     update_tgt(frame)
+    #     if not has_target(frame):
+    #         return
         
-    while tgt_center[1] > (height + buffer):
-        print("Move Up")
-        update_tgt(frame)
-        if not has_target(frame):
-            return
+    # while tgt_center[1] > (height + buffer):
+    #     print("Move Up")
+    #     update_tgt(frame)
+    #     if not has_target(frame):
+    #         return
     return
 
 def update_tgt(frame):
