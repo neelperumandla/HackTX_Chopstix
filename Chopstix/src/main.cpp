@@ -41,7 +41,7 @@ void zeroAxis()
 {
   currBaseLocation = 0;
   currArmInclination = 0;
-  chopStixOpen = true;
+  chopStixOpen = false;
 }
 
 void setup()

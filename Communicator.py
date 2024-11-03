@@ -2,7 +2,7 @@ import serial
 import time
 
 # the port computer sees arduino at
-COM_PORT = "\\\\.\\COM6"
+COM_PORT = "\\\\.\\COM7"
 
 serialRead = serial.Serial(
     port=COM_PORT, baudrate=9600, bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE
@@ -11,6 +11,7 @@ serialRead = serial.Serial(
 
 # encodes to write to sepytrial
 def serialWrite(inp):
+    time.sleep(0.1)
     serialRead.write(str.encode(inp))
 
 
@@ -32,13 +33,3 @@ def toggleSticks():
 # zero out the axis'
 def zeroAxis():
     serialWrite("z")
-
-
-def main():
-    toggleSticks()
-
-
-time.sleep(2)
-serialWrite("tc")
-time.sleep(2)
-serialWrite("tc")

@@ -222,7 +222,7 @@ def direction(frame):
 
 def main():
     # Open video capture
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -234,17 +234,17 @@ def main():
         cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0)
         cap.set(cv2.CAP_PROP_EXPOSURE, -4.7)
 
+        # Display the frame with rectangles
+        cv2.imshow("Snickers Minis Detection", frame)
+
         # Process frame and draw rectangles around detected Snickers Minis
         frame = draw_rect(frame)
         direction(frame)
         position_stix(frame)
-        if(not has_target(frame)):
+        if not has_target(frame):
             print("take chocolate")
             comm.toggleSticks()
             break
-
-        # Display the frame with rectangles
-        cv2.imshow("Snickers Minis Detection", frame)
 
         # Exit if 'q' key is pressed
         if cv2.waitKey(2) == ord("q"):
