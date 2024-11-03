@@ -205,6 +205,7 @@ def main():
         frame = draw_rect(frame)
         direction(frame)
         position_stix(frame)
+        comm.toggleSticks
         
         # Display the frame with rectangles
         cv2.imshow('Snickers Minis Detection', frame)
