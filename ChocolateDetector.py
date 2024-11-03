@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import Communicator as comm
+import detect_open_mouth as mouth
 
 
 def get_contours(frame):
@@ -131,6 +132,32 @@ def has_target(frame):
         return True
     else:
         return False
+    
+def put_in_mouth(frame):
+    if not has_target(frame):
+        return
+    
+    chocolate_contours = get_contours(frame)
+    eligible_chocolates = eligible(chocolate_contours)
+    
+    tgt = find_closest_bbox(
+        [cv2.boundingRect(contour) for contour in eligible_chocolates],
+        cv2.boundingRect(eligible_chocolates[0]),
+    )
+    center = mouth.center_mouth(mouth)
+    
+    buffer = 10
+    
+    
+    while tgt[0] < (center[0] - buffer):
+        print("Move Right")
+    while tgt[0] > (center[0] + buffer):
+        print("Move Left")
+
+    while tgt[1] < (center[1] - buffer):
+        print("Move Down")
+    while tgt[1] > (center[1] + buffer):
+        print("Move Up")
 
 
 def position_stix(frame):
@@ -175,16 +202,27 @@ def position_stix(frame):
     buffer = 10
 
     # Adjust position based on chocolate target relative to chopstick midpoint
+    width, height,_, _ = frame.shape
     tgt_center = calculate_center(tgt)
-    if tgt_center[0] < (current_aim[0] - buffer):
+    while tgt_center[0] < (width/2 - buffer):
         print("Move Right")
-    elif tgt_center[0] > (current_aim[0] + buffer):
+        if not has_target(frame):
+            return
+    while tgt_center[0] > (width/2 + buffer):
         print("Move Left")
+        if not has_target(frame):
+            return
 
-    if tgt_center[1] < (current_aim[1] - buffer):
+    while tgt_center[1] < (height - buffer):
         print("Move Down")
-    elif tgt_center[1] > (current_aim[1] + buffer):
+        if not has_target(frame):
+            return
+        
+    while tgt_center[1] > (height + buffer):
         print("Move Up")
+        if not has_target(frame):
+            return
+    return
 
 
 def direction(frame):
@@ -210,13 +248,13 @@ def direction(frame):
 
     # Ensure that tgt is not None
     if tgt:
-        if tgt[0] > center[0]:
+        while tgt[0] > center[0]:
             print("Move Right")
-        elif tgt[0] < center[0]:
+        while tgt[0] < center[0]:
             print("Move Left")
-        if tgt[1] > center[1]:
+        while tgt[1] > center[1]:
             print("Move Up")
-        elif tgt[1] < center[1]:
+        while tgt[1] < center[1]:
             print("Move Down")
 
 
@@ -250,7 +288,9 @@ def main():
         if(not has_target(frame) and is_found):
             print("take chocolate")
             comm.toggleSticks()
-            break
+            put_in_mouth(frame)
+            comm.toggleSticks()
+            
 
         # Exit if 'q' key is pressed
         if cv2.waitKey(2) == ord("q"):
