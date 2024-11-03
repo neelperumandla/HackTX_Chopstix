@@ -192,6 +192,7 @@ void communicationLoop()
   {
     int steps = secondPart.toInt();
     rotateArmBySteps(steps);
+    Serial.println("running arms " + String(steps));
   }
   // tc = toggle chopStix
   if (baseCommand.equals("tc"))
