@@ -227,7 +227,7 @@ def main():
         cap.set(cv2.CAP_PROP_EXPOSURE, -4.7)
         
         # Process frame and draw rectangles around detected Snickers Minis
-        frame = draw_rect(frame, 'brown')
+        frame = draw_rect(frame)
         
         position_stix(frame)
         comm.toggleSticks()
