@@ -160,11 +160,13 @@ boolean isChopstixOpen()
   return chopStixOpen;
 }
 
+String command;
 // used to communicate over serial
 void communicationLoop()
 {
+
   // the base command
-  String command = Serial.readString();
+  command = Serial.readString();
   int space1 = command.indexOf(" ");
   String baseCommand;
   String secondPart;
@@ -225,11 +227,5 @@ void communicationLoop()
 boolean done = true;
 void loop()
 {
-
-  if (done)
-  {
-    // toggleStix();
-    done = false;
-  }
   communicationLoop();
 }

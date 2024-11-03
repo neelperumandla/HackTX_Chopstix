@@ -1,4 +1,5 @@
 import serial
+import time
 
 # the port computer sees arduino at
 COM_PORT = "\\\\.\\COM6"
@@ -31,3 +32,13 @@ def toggleSticks():
 # zero out the axis'
 def zeroAxis():
     serialWrite("z")
+
+
+def main():
+    toggleSticks()
+
+
+time.sleep(2)
+serialWrite("tc")
+time.sleep(2)
+serialWrite("tc")
