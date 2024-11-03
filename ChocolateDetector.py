@@ -112,7 +112,9 @@ def has_target(frame):
 
 def position_stix(frame):
     # Detect and filter chocolate contours
-        
+    
+    if not has_target(frame):
+        return
     chocolate_contours = get_contours(frame)
     eligible_chocolates = eligible(chocolate_contours)
         
