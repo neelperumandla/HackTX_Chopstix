@@ -23,11 +23,11 @@ def get_stix_contours(frame):
     mask2 = cv2.inRange(frame_hsv, (170, 70, 50), (180, 255, 255)) # red upper
     frame_threshold = mask1 | mask2
     
-    frame_threshold = cv2.erode(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
-    frame_threshold = cv2.dilate(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
+    frame_threshold = cv2.erode(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2)))
+    frame_threshold = cv2.dilate(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2)))
 
-    frame_threshold = cv2.dilate(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
-    frame_threshold = cv2.erode(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
+    frame_threshold = cv2.dilate(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2)))
+    frame_threshold = cv2.erode(frame_threshold, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2)))
 
     
     contours, _ = cv2.findContours(frame_threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
