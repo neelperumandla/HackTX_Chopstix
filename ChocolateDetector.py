@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import Communicator as comm
 
 
 def get_contours(frame):
@@ -206,6 +207,7 @@ def main():
         frame = draw_rect(frame)
         direction(frame)
         position_stix(frame)
+        comm.toggleSticks()
         
         # Display the frame with rectangles
         cv2.imshow('Snickers Minis Detection', frame)
