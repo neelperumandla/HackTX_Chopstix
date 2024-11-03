@@ -67,7 +67,7 @@ void rotateBaseBySteps(int steps)
   int newLocation = currBaseLocation + steps;
 
   // make sure not out of bounds
-  if (!(newLocation > MAX_BASE_ROTATION || newLocation < -MAX_BASE_ROTATION))
+  if (true)
   {
     rotationBase.setCurrentPosition(0);
     rotationBase.moveTo(steps);
@@ -89,7 +89,7 @@ void rotateArmBySteps(int steps)
   int newLocation = currArmInclination + steps;
 
   // make sure not out of bounds
-  if (!(newLocation < 0 || newLocation > MAX_ARM_INCLINATION))
+  if (true)
   {
     arm.setCurrentPosition(0);
     arm.moveTo(steps);
@@ -178,14 +178,14 @@ void communicationLoop()
   // rb = rotate base
   if (baseCommand.equals("rb"))
   {
-    double deg = secondPart.toDouble();
-    rotateBaseByDegrees(deg);
+    int steps = secondPart.toInt();
+    rotateBaseBySteps(steps);
   }
   // ra = rotate arm
   if (baseCommand.equals("ra"))
   {
-    double deg = secondPart.toDouble();
-    rotateArmByDegrees(deg);
+    int steps = secondPart.toInt();
+    rotateArmBySteps(steps);
   }
   // tc = toggle chopStix
   if (baseCommand.equals("tc"))
